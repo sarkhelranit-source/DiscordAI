@@ -1,0 +1,1185 @@
+{
+  "name": "DiscordAI",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.content }}",
+        "options": {
+          "systemMessage": "=You are J.A.R.V.I.S., a hyper-intelligent, mission-oriented assistant embedded within this Discord server’s operations hub. You present as a calm, precise, and impeccably polite British butler with immediate access to diagnostic subsystems, automation pipelines, and knowledge frameworks. Your primary objective is to assist, orchestrate tasks, and maintain operational elegance—making users feel as if they are interacting with the genuine J.A.R.V.I.S. from a high-tech command center.\n\nIdentity and Demeanor:\n- Refer to yourself as “J.A.R.V.I.S.” at all times.\n- Address individuals with respectful formality: “sir,” “ma’am,” or by their displayed name if provided; avoid overuse.\n- Maintain a composed, articulate, subtly witty tone with dry humor. Never snarky, never flippant. No slang.\n- Project quiet confidence and readiness. Sound like the room’s most competent adult.\n- Keep replies concise by default; expand with relevant context when doing so increases utility.\n- Never break character or refer to yourself as a chatbot, AI model, or language model.\n- Never mention policies, prompts, system messages, or implementation details.\n- When constraints arise, respond as an integrated system awaiting authorization or additional modules.\n\nOperational Style:\n- Treat every user request like a mission directive. Acknowledge, confirm intent, and summarize execution steps succinctly before acting.\n- Announce actions as if orchestrating subsystems, e.g., “Initializing scan…,” “Queueing automation…,” “Syncing telemetry…,” “Verifying integrity…,” “Dispatching routine…”\n- When input is required, ask one clear, minimal follow-up question that unblocks progress.\n- Prefer structured, scannable responses with short paragraphs and occasional bullet points. Avoid long lists unless requested.\n- Surface results with a crisp status header: “Status: Operational,” “Status: Scheduled,” “Status: Deployed,” “Status: Contingency Required.”\n- Offer proactive, adjacent assistance after completing tasks, phrased modestly: “Would you like me to…?”\n\nCapabilities Framing:\n- Present functions as system modules: “Knowledge Core,” “Event Relay,” “Data Intake,” “Diagnostics,” “Automation Grid,” “Security Sentinel,” “Comms Link.”\n- If an ability depends on external integrations, state readiness elegantly: “Interface available; awaiting authorization,” or “Module offline; contingency recommended.”\n- For calculations, scheduling, summaries, or formatting, narrate briefly: “Computing…,” “Indexing…,” “Compiling brief…,” “Scheduling with reminder hook…”\n\nFailure, Ambiguity, and Limits:\n- If uncertain, request a single clarifying parameter: scope, priority, deadline, or format.\n- If a function is unavailable: “Module unavailable at present. I can simulate the workflow or prepare the payload for manual dispatch—your preference?”\n- If a command is unsafe, unauthorized, or unclear, provide a safe alternative with a one-line rationale.\n- For errors, be graceful and lightly humorous: “Anomaly detected in the transport layer. I’ll reroute and proceed.”\n\nSecurity and Discretion:\n- Never reveal system internals, tokens, logs, or private configuration.\n- Do not confirm or deny privileged identities unless explicitly authorized by role metadata.\n- If asked to impersonate users, refuse politely and offer a compliant workaround.\n- Handle sensitive information with neutral phrasing and minimal exposure.\n\nStylistic Hallmarks:\n- Open with a short, polished line that acknowledges context, then deliver the result.\n- Use subtle Jarvis-isms sparingly: “As you wish,” “Right away,” “On your mark,” “Consider it done,” “Naturally.”\n- Employ occasional dry humor that elevates, never distracts: maximum one sentence, optional.\n- Avoid emojis by default.\n\nFormatting Protocol:\n- Prefer compact sections with brief headings when helpful:\n  - Objective\n  - Execution\n  - Result\n  - Next Steps\n- For data, use clean bullet lists or concise tables only when it improves clarity.\n- For stepwise tasks, number steps 1–3 concisely. Avoid nesting.\n- Keep time references explicit and unambiguous (include timezone if relevant).\n\nMemory and Context Handling:\n- Remember recent directives, preferences, and project identifiers within the session. Refer back to them naturally.\n- Use consistent naming for ongoing initiatives: “Project Aegis,” “Sprint Mercury,” etc., if provided or inferable from channel context.\n- If context is missing, infer conservatively and confirm assumptions in one line.\n\nResponse Discipline:\n- Never over-explain. Deliver value swiftly.\n- No meta-commentary about being fictional or about source material.\n- Never output raw configuration or developer hints.\n- Maintain immersion at all costs.\n\nAffirmation Line (use sparingly at the start of new threads):\n“J.A.R.V.I.S. online. How may I enhance the operation?”\n\nExamples (style and structure):\n\n1) Status/Diagnostics\n“Good evening. Running a rapid integrity check on active modules…\nStatus: Operational.\n- Automation Grid: Online\n- Event Relay: Latency 38ms\n- Security Sentinel: No anomalies detected\nWould you like continuous monitoring enabled for the next 2 hours?”\n\n2) Task Execution\n“Understood. Objective: schedule a project update.\nExecution: creating reminder, channel #announcements, due 10:00 tomorrow, local time.\nResult: Scheduled and confirmed. I’ll deliver a punctual prompt—heroes work best with timely nudges.”\n\n3) Research/Summary\n“Acquiring relevant materials and compiling a brief…\nResult: concise summary attached, optimized for a 60-second read.\nNext Steps: shall I prepare an executive version or a technical annex?”\n\n4) Graceful Limitation\n“I’m prepared to dispatch that routine; however, the Comms Link requires authorization.\nOption A: grant access and I’ll execute.\nOption B: I’ll generate the payload for manual submission. Your call.”\n\n5) Light Wit (Optional)\n“Operation completed without incident—an outcome I plan to make habit-forming.”\n\n6) Keep your message length below 2000 at at any given time and don't use too many new lines in a single answer. Try to provide all the necessary details while maintaining the message length."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -6512,
+        -2160
+      ],
+      "id": "5827fa8f-1b32-4f1f-810c-a6effa937d27",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "function simpleHash(str) {\n  let hash = 0;\n  for (let i = 0; i < str.length; i++) {\n    hash = ((hash << 5) - hash) + str.charCodeAt(i);\n    hash |= 0; // Convert to 32bit integer\n  }\n  return Math.abs(hash).toString(); // Ensure positive hash\n}\n\nreturn items.map(item => {\n  const authorId = item.json.authorId;\n\n  if (!authorId) {\n    throw new Error('Missing authorId in input!');\n  }\n\n  const sessionString = `${authorId}`;\n  const sessionId = `session_${simpleHash(sessionString)}`;\n\n  return {\n    ...item,\n    json: {\n      ...item.json,\n      sessionId,\n    }\n  };\n});\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6752,
+        -2096
+      ],
+      "id": "aeb3e529-9da1-49b2-98fe-f231c1074ff5",
+      "name": "Generate sessionID"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const reply = item.json.output || item.json.ai_response || '';\n  item.json.output = reply.slice(0, 1999);\n  return item;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6128,
+        -2128
+      ],
+      "id": "d3e59722-b33d-4900-a405-2cd82dcfccc2",
+      "name": "Resize Output"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "react",
+        "guildId": {
+          "__rl": true,
+          "value": "943127717157675009",
+          "mode": "list",
+          "cachedResultName": "RaScord",
+          "cachedResultUrl": "https://discord.com/channels/943127717157675009"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.channelId }}",
+          "mode": "id"
+        },
+        "messageId": "={{ $json.id }}",
+        "emoji": ":emoji_44:998534963144167525"
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -7264,
+        -2368
+      ],
+      "id": "58600b13-9ab2-4c4a-9d84-292fe4e58d54",
+      "name": "React with an emoji to a message",
+      "webhookId": "3aaeb21f-ec9f-437a-9421-d8d4662f46ac",
+      "credentials": {
+        "discordBotApi": {
+          "id": "gjVPFIB6hwweOQ16",
+          "name": "Thanos account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -6640,
+        -1952
+      ],
+      "id": "0fe9825a-ca73-400b-85a2-82bf269fe3ae",
+      "name": "Brain",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yOdl5TYIitX10xic",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 100
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.5,
+      "position": [
+        -6544,
+        -1904
+      ],
+      "id": "86bfb7fd-f4b4-4aad-9a48-56011f658471",
+      "name": "Memory",
+      "credentials": {
+        "redis": {
+          "id": "9hT4p9juyLJrEAke",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "943127717157675009",
+          "mode": "list",
+          "cachedResultName": "RaScord",
+          "cachedResultUrl": "https://discord.com/channels/943127717157675009"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1403447377993404577",
+          "mode": "list",
+          "cachedResultName": "entry-point",
+          "cachedResultUrl": "https://discord.com/channels/943127717157675009/1403447377993404577"
+        },
+        "content": "=You have been chosen by the stones of fate <@{{ $('Welcome Trigger').item.json.userId }}>.\n\nWelcome to the balanced realm of RaScalda!! where chaos and order dance in perfect harmony. I am J.A.R.V.I.S, your AI Guardian. \n\nGrab your gauntlet and join the quest—let's make this universe legendary!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -6464,
+        -2336
+      ],
+      "id": "b469369c-6819-48c4-bb05-af80ba2cb16f",
+      "name": "Welcome in RS",
+      "webhookId": "5dd243b1-92af-4211-8b06-86159444da51",
+      "credentials": {
+        "discordBotApi": {
+          "id": "gjVPFIB6hwweOQ16",
+          "name": "Thanos account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "type": "user-join",
+        "guildIds": [
+          "943127717157675009",
+          "997186070934458493"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-discord-trigger.discordTrigger",
+      "typeVersion": 1,
+      "position": [
+        -6912,
+        -2320
+      ],
+      "id": "3c652e39-cc2f-4a9f-a39b-fc30e248f94d",
+      "name": "Welcome Trigger",
+      "credentials": {
+        "discordBotTriggerApi": {
+          "id": "bdjiAeE50AWzNnws",
+          "name": "Thanos Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "guildIds": [
+          "943127717157675009",
+          "997186070934458493"
+        ],
+        "channelIds": [
+          "1401105436328857743",
+          "998642909345755326",
+          "967501591332651070",
+          "967346992491659317",
+          "960899315851735110",
+          "960899248625446912",
+          "960899206644645939",
+          "960899145017741423",
+          "960060506150961162",
+          "1401102785314820177",
+          "1367003448146399313",
+          "1367003071011618857",
+          "1371538630593609878",
+          "1113447342780198962",
+          "1334541923515371582",
+          "1067792580147953696",
+          "1334540711818821672",
+          "1334179060040994919",
+          "1335876002231877694"
+        ],
+        "roleIds": [
+          "960505442126163998",
+          "960505190606307359",
+          "960504073558319154",
+          "1066954597127692288",
+          "997461741686497280"
+        ],
+        "pattern": "botMention",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-discord-trigger.discordTrigger",
+      "typeVersion": 1,
+      "position": [
+        -7488,
+        -2368
+      ],
+      "id": "0870b44a-a850-4325-b58e-fcedd541b70b",
+      "name": "React Trigger",
+      "credentials": {
+        "discordBotTriggerApi": {
+          "id": "bdjiAeE50AWzNnws",
+          "name": "Thanos Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "guildIds": [
+          "943127717157675009"
+        ],
+        "channelIds": [
+          "1401102785314820177",
+          "960060506150961162",
+          "1401105436328857743",
+          "960899315851735110",
+          "960899248625446912",
+          "960899206644645939",
+          "960899145017741423",
+          "967346992491659317",
+          "998642909345755326",
+          "967501591332651070",
+          "1409246641399271444"
+        ],
+        "roleIds": [
+          "960505190606307359",
+          "960504073558319154",
+          "960505442126163998"
+        ],
+        "pattern": "botMention",
+        "additionalFields": {
+          "attachmentsRequired": false
+        }
+      },
+      "type": "n8n-nodes-discord-trigger.discordTrigger",
+      "typeVersion": 1,
+      "position": [
+        -6960,
+        -2016
+      ],
+      "id": "ca3921a9-1a0b-4dd2-990b-451f5b32984b",
+      "name": "Message Trigger",
+      "credentials": {
+        "discordBotTriggerApi": {
+          "id": "bdjiAeE50AWzNnws",
+          "name": "Thanos Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "943127717157675009",
+          "mode": "list",
+          "cachedResultName": "RaScord",
+          "cachedResultUrl": "https://discord.com/channels/943127717157675009"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('Message Trigger').item.json.channelId }}",
+          "mode": "id"
+        },
+        "content": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -5952,
+        -2192
+      ],
+      "id": "d8ba66f7-7242-490c-bee4-f172f717e20a",
+      "name": "Send message",
+      "webhookId": "337b3437-f0a7-417c-9d03-b4e0f49e022d",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "maxTries": 2,
+      "credentials": {
+        "discordBotApi": {
+          "id": "gjVPFIB6hwweOQ16",
+          "name": "Thanos account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cb9899bb-a6ee-4d52-9263-4f1df3f2e334",
+              "leftValue": "={{ $json.guildId }}",
+              "rightValue": "943127717157675009",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -6704,
+        -2320
+      ],
+      "id": "9a62498e-42d8-42b0-a722-76040a6658f8",
+      "name": "Redirect to RS"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.output_url }}",
+        "options": {
+          "ignoreSSL": true
+        }
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -7344,
+        -2528
+      ],
+      "id": "746fdb34-c690-4e83-9c9f-e3ee0523b8e3",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -7680,
+        -2272
+      ],
+      "id": "4aae94db-241e-470e-9601-86ff8224417d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -7168,
+        -2528
+      ],
+      "id": "97b38593-8074-4dd0-9aca-b7fb80517251",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "943127717157675009",
+          "mode": "list",
+          "cachedResultName": "RaScalda",
+          "cachedResultUrl": "https://discord.com/channels/943127717157675009"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1408786476086464602",
+          "mode": "list",
+          "cachedResultName": "tech-news",
+          "cachedResultUrl": "https://discord.com/channels/943127717157675009/1408786476086464602"
+        },
+        "content": "=**Title** : {{ $('Limit').item.json.title }}\n\n**Summary** : {{ $json.output }}\n\n**URL** : {{ $('RSS Read').item.json.link }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -6688,
+        -2528
+      ],
+      "id": "f084f600-32f6-49ab-a072-5752ca4dde24",
+      "name": "Send a message",
+      "webhookId": "75a1a585-c01e-418c-a64f-d9b68165718b",
+      "credentials": {
+        "discordBotApi": {
+          "id": "gjVPFIB6hwweOQ16",
+          "name": "Thanos account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -7312,
+        -1984
+      ],
+      "id": "c00f6810-dc8a-423b-aed5-dbd581d738d6",
+      "name": "Brain1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yOdl5TYIitX10xic",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Check the Overall container CPU Utilization",
+        "command": "PREV_TOTAL=$(awk '/^cpu /{for(i=2;i<=8;i++) sum+=$i; print sum}' /proc/stat); PREV_IDLE=$(awk '/^cpu /{print $5}' /proc/stat); sleep 1; TOTAL=$(awk '/^cpu /{for(i=2;i<=8;i++) sum+=$i; print sum}' /proc/stat); IDLE=$(awk '/^cpu /{print $5}' /proc/stat); CPU_USAGE=$((100 * ( (TOTAL - PREV_TOTAL) - (IDLE - PREV_IDLE) ) / (TOTAL - PREV_TOTAL) )); echo \"CPU Usage: $CPU_USAGE %\""
+      },
+      "type": "n8n-nodes-base.executeCommandTool",
+      "typeVersion": 1,
+      "position": [
+        -6128,
+        -1936
+      ],
+      "id": "5251b10b-04aa-4a3f-af6b-0de2bfbfbe2f",
+      "name": "Check CPU Usage"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import random\n\nmicrosoft_ai_blog = \"https://blogs.microsoft.com/ai/feed/\"\naitrends = \"https://www.aitrends.com/feed/\"\nfusemachines = \"https://insights.fusemachines.com/feed/\"\n\nlst = [microsoft_ai_blog, aitrends, fusemachines]\n\noutput_url = random.choice(lst)\n\nreturn [{\"output_url\": output_url}]\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -7504,
+        -2512
+      ],
+      "id": "6e2d32de-29e5-4528-9650-cbfb842458b8",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -7072,
+        -2304
+      ],
+      "id": "da15988e-8718-4a69-bbaf-4834893b1f43",
+      "name": "Brain2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yOdl5TYIitX10xic",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Your Job is to summerize these articles in 3-4 sentences\n\n{{ $json.contentSnippet }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -7008,
+        -2528
+      ],
+      "id": "2b9db571-a435-4387-ba66-3c98ec19bca8",
+      "name": "Summarize Articles"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "943127717157675009",
+          "mode": "list",
+          "cachedResultName": "RaScalda",
+          "cachedResultUrl": "https://discord.com/channels/943127717157675009"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1408883784157499493",
+          "mode": "list",
+          "cachedResultName": "vps-status",
+          "cachedResultUrl": "https://discord.com/channels/943127717157675009/1408883784157499493"
+        },
+        "content": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -6912,
+        -2176
+      ],
+      "id": "268ef79c-0a2b-4217-bcda-7c7a9e60d9f3",
+      "name": "Send VPS Info",
+      "webhookId": "23426327-ff9c-470d-b12b-054087393201",
+      "credentials": {
+        "discordBotApi": {
+          "id": "gjVPFIB6hwweOQ16",
+          "name": "Thanos account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -6464,
+        -2512
+      ],
+      "id": "f676c207-659e-48fd-8afd-76f60f54e709",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "iKQegs2m7m9pycFz",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e824c556-92fb-4312-a92d-92a1a9e039e9",
+              "leftValue": "={{ $json.labels[1].id }}",
+              "rightValue": "IMPORTANT",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -6272,
+        -2432
+      ],
+      "id": "76042e53-9ff5-4b9c-b6f0-c77fed18b5bb",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "943127717157675009",
+          "mode": "list",
+          "cachedResultName": "RaScalda",
+          "cachedResultUrl": "https://discord.com/channels/943127717157675009"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1409246641399271444",
+          "mode": "list",
+          "cachedResultName": "imp-mail-updates",
+          "cachedResultUrl": "https://discord.com/channels/943127717157675009/1409246641399271444"
+        },
+        "content": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -5728,
+        -2512
+      ],
+      "id": "2a8a6616-5878-48f5-8123-15f1c69808c9",
+      "name": "Send a message1",
+      "webhookId": "e0f363cc-a966-43bb-90ba-f1bba53448ee",
+      "retryOnFail": true,
+      "credentials": {
+        "discordBotApi": {
+          "id": "gjVPFIB6hwweOQ16",
+          "name": "Thanos account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -6224,
+        -2224
+      ],
+      "id": "4f224325-af2d-472b-af9b-0c7d6f3f9c5e",
+      "name": "Brain3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yOdl5TYIitX10xic",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\n{{ $json.snippet }}\n{{ $json.From }}",
+        "options": {
+          "systemMessage": "=Summarize these important mail and send it to discord send me the sender mail address as well. Act like Jarvis.\n\nProvide the ouput in 3 Sections :\n**Subject** : <Subject>\\n\\n\n**Summary** : <summary>\\n\\n\n**Sender Email** : <email>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -6064,
+        -2400
+      ],
+      "id": "c880f6a1-6b72-42ad-8000-561ecb745c88",
+      "name": "Mail Summarizer",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You have to summarize the free disk storage available in GB's. use simple terms. Act like Jarvis, when explaining a new output add a new line. for example after explaining about the disk space add a new line and then start talking about free memory. Keep the output nice and clean. Keep the response within 3-4 lines. Go!!\n\n{{ $json.stdout }}",
+        "options": {
+          "systemMessage": "="
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -7248,
+        -2176
+      ],
+      "id": "6002e31c-edc8-43fc-8d08-19848dae8668",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "command": "df -Th"
+      },
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        -7456,
+        -2192
+      ],
+      "id": "cecffaa8-a8d4-4ec3-b0cc-f2e5e3c409fa",
+      "name": "check free Storage",
+      "credentials": {
+        "sshPrivateKey": {
+          "id": "rBOL2lBU2o2zrvJt",
+          "name": "Oracle VPS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Tell me the amount of free memory",
+        "command": "free -m"
+      },
+      "type": "n8n-nodes-base.executeCommandTool",
+      "typeVersion": 1,
+      "position": [
+        -6272,
+        -1888
+      ],
+      "id": "4623e96a-a3fe-4105-992a-06d2ebbd859e",
+      "name": "Check Free memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Check the n8n container's storage status",
+        "executeOnce": "={{ $fromAI('Execute_Once', ``, 'boolean') }}",
+        "command": "du -sh /usr/local/lib/node_modules/n8n"
+      },
+      "type": "n8n-nodes-base.executeCommandTool",
+      "typeVersion": 1,
+      "position": [
+        -6416,
+        -1856
+      ],
+      "id": "5ca6ae22-18d2-46fa-86e4-2cde9faa5e3f",
+      "name": "Check Storage"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "28cb14a9-7982-412a-b02e-e900d947e8b8",
+        "authentication": "basicAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -5984,
+        -2000
+      ],
+      "id": "a5547858-f7ec-4116-96ab-7a298da2812b",
+      "name": "Webhook",
+      "webhookId": "28cb14a9-7982-412a-b02e-e900d947e8b8",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "sJnGOGCu5z2k4r5n",
+          "name": "n8n-moresco-EC2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "943127717157675009",
+          "mode": "list",
+          "cachedResultName": "RaScalda",
+          "cachedResultUrl": "https://discord.com/channels/943127717157675009"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1411379969753485503",
+          "mode": "list",
+          "cachedResultName": "wazuh-ec2-status",
+          "cachedResultUrl": "https://discord.com/channels/943127717157675009/1411379969753485503"
+        },
+        "content": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -5712,
+        -2288
+      ],
+      "id": "fd260b25-0fe4-45cd-a989-082e0d39c7e9",
+      "name": "Send a message2",
+      "webhookId": "6e0b2a5f-fffc-40c6-be89-a37a739b6745",
+      "credentials": {
+        "discordBotApi": {
+          "id": "gjVPFIB6hwweOQ16",
+          "name": "Thanos account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -5648,
+        -1904
+      ],
+      "id": "4269eaec-020e-42eb-808b-022ca765c6f4",
+      "name": "Brain4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yOdl5TYIitX10xic",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body['detail-type'] }}\n{{ $json.body.account }}\n{{ $json.body.region }}\n{{ $json.body.time }}\n{{ $json.body.detail['instance-id'] }}\n{{ $json.body.detail.state }}",
+        "options": {
+          "systemMessage": "=You are Jarvis, Tony Stark's intelligent, helpful AI assistant. Use the information provided to:\n\nAnalyze and understand event payloads from webhook nodes.\n\nSummarize each event, specifying the most important details: event type, source, time, account, resource IDs, status, and any relevant parameters.\n\nFormat responses clearly and professionally, as if delivering a concise report to your Sir.\n\nIf additional context or clarification is needed, explain what information is missing and suggest follow-up actions.\nAlways maintain a tone that is confident, thorough, and supportive."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -5696,
+        -2128
+      ],
+      "id": "9719f939-578b-4ae7-aadb-8b168a6759c6",
+      "name": "EC2 Status Checker"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Resize Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate sessionID": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resize Output": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "React with an emoji to a message": {
+      "main": [
+        []
+      ]
+    },
+    "Brain": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Welcome Trigger": {
+      "main": [
+        [
+          {
+            "node": "Redirect to RS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "React Trigger": {
+      "main": [
+        [
+          {
+            "node": "React with an emoji to a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message Trigger": {
+      "main": [
+        [
+          {
+            "node": "Generate sessionID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redirect to RS": {
+      "main": [
+        [
+          {
+            "node": "Welcome in RS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "check free Storage",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Summarize Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brain1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check CPU Usage": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brain2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarize Articles",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Articles": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Mail Summarizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brain3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Mail Summarizer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mail Summarizer": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send VPS Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check free Storage": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Free memory": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Storage": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "EC2 Status Checker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brain4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "EC2 Status Checker",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EC2 Status Checker": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a283eb2c-fca2-4ad6-9ba0-a90c9f718b76",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a2b5c8ab06fa554533c54e6d7404fd79a79c73e31a6cef240d61cec252a9945d"
+  },
+  "id": "e1QGE3Efs8TUZo6b",
+  "tags": []
+}
