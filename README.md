@@ -4,7 +4,7 @@
 
 DiscordAI transforms your Discord server into a high-tech command center by deploying a hyper-intelligent, mission-oriented AI assistant modeled after Marvel's J.A.R.V.I.S. The system is built atop [n8n](https://n8n.io/), with integrated LangChain modules, advanced workflow automation, and seamless Discord connectivity.
 
-![DiscordAI and n8n Integration](discord-n8n.png)
+![DiscordAI and n8n Integration](n8n-discord-latest.png)
 
 ## Features
 
